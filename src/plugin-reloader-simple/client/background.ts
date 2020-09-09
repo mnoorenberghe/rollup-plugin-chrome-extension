@@ -6,8 +6,30 @@ import {
   timestampPathPlaceholder,
 } from '../CONSTANTS'
 
+import { code } from 'code ./content.ts'
+
 // Log load message to browser dev console
 console.log(loadMessagePlaceholder.slice(1, -1))
+
+// Modify chrome.tabs.executeScript to inject reloader
+const _executeScript = chrome.tabs.executeScript
+chrome.tabs.executeScript = (...args: any): void => {
+  const tabId = typeof args[0] === 'number' ? args[0] : null
+
+  // execute reloader
+  const reloaderArgs = (tabId === null
+    ? ([] as any[])
+    : ([tabId] as any[])
+  ).concat([
+    { code },
+    () => {
+      // execute original script
+      _executeScript(...(args as [any, any, any]))
+    },
+  ])
+
+  _executeScript(...(reloaderArgs as [any, any, any]))
+}
 
 let timestamp: number | undefined
 
