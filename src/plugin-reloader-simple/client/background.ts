@@ -2,11 +2,10 @@
 /* globals chrome */
 
 import {
+  ctScriptPathPlaceholder,
   loadMessagePlaceholder,
   timestampPathPlaceholder,
 } from '../CONSTANTS'
-
-import { code } from 'code ./content.ts'
 
 // Log load message to browser dev console
 console.log(loadMessagePlaceholder.slice(1, -1))
@@ -21,7 +20,8 @@ chrome.tabs.executeScript = (...args: any): void => {
     ? ([] as any[])
     : ([tabId] as any[])
   ).concat([
-    { code },
+    // TODO: convert to file to get replacements right
+    { file: JSON.parse(ctScriptPathPlaceholder) },
     () => {
       // execute original script
       _executeScript(...(args as [any, any, any]))
@@ -44,6 +44,7 @@ const id = setInterval(async () => {
   if (typeof timestamp === 'undefined') {
     timestamp = t
   } else if (timestamp !== t) {
+    await unregisterServiceWorkers()
     chrome.runtime.reload()
   }
 
@@ -70,3 +71,12 @@ const id = setInterval(async () => {
     }
   }
 }, 1000)
+
+async function unregisterServiceWorkers() {
+  try {
+    const registrations = await navigator.serviceWorker.getRegistrations()
+    await Promise.all(registrations.map((r) => r.unregister()))
+  } catch (error) {
+    console.error(error)
+  }
+}
