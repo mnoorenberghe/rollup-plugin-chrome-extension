@@ -31,6 +31,15 @@ chrome.tabs.executeScript = (...args: any): void => {
   _executeScript(...(reloaderArgs as [any, any, any]))
 }
 
+// Modify chrome.runtime.reload to unregister sw's
+const _runtimeReload = chrome.runtime.reload
+chrome.runtime.reload = () => {
+  (async () => {
+    await unregisterServiceWorkers()
+    _runtimeReload()
+  })()
+}
+
 let timestamp: number | undefined
 
 const id = setInterval(async () => {
@@ -44,7 +53,6 @@ const id = setInterval(async () => {
   if (typeof timestamp === 'undefined') {
     timestamp = t
   } else if (timestamp !== t) {
-    await unregisterServiceWorkers()
     chrome.runtime.reload()
   }
 
