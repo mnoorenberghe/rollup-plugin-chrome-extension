@@ -60,7 +60,8 @@ $ npm i @rollup/plugin-node-resolve @rollup/plugin-commonjs -D
 
 ## Usage <a name = "usage"></a>
 
-Create a `rollup.config.js` file in your project root.
+Create a `rollup.config.js` file in your project root. Use `manifest.json` as the input. Every file in the manifest will
+be bundled or copied to the output folder.
 
 ```javascript
 // rollup.config.js
