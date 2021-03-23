@@ -19,6 +19,7 @@
     "build": "rollup -c",
     "build:types": "tsc -p tsconfigs/tsconfig-types.json",
     "check:typescript": "tsc --noEmit",
+    "prepare": "npm run build && npm run build:types",
     "lint": "tslint",
     "prepublishOnly": "run-p build build:types",
     "postpublish": "rm -rf node_modules package-lock.json && pnpm i",
