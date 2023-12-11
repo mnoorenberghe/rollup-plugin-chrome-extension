@@ -189,7 +189,7 @@
           },
           "match_origin_as_fallback": {
             "type": "boolean",
-            "description": "Controls whether the content script runs in all frames of the matching page, or only the top frame.",
+            "description": "Controls whether the content script runs in frames that are related to a matching frame.",
             "default": false
           },
           "include_globs": {
